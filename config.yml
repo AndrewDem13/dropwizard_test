@@ -1,0 +1,6 @@
+mongoDB:
+  hosts: localhost
+  port: 27017
+  dbName: test
+  user: admin
+  pass: root
