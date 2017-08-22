@@ -21,7 +21,7 @@ public class EntityResource {
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     @Timed
-    public Response addTest(Entity entity) {
+    public Response add(Entity entity) {
         service.createEntity(entity);
         return Response.status(Response.Status.CREATED).entity(entity).build();
     }
@@ -29,7 +29,7 @@ public class EntityResource {
     @GET
     @Path("{message}")
     @Timed
-    public Response getByMessageTest(@PathParam("message") String message) {
+    public Response getByMessage(@PathParam("message") String message) {
         Entity result = (Entity) service.getEntity(message);
         if (result != null) {
             return Response.status(Response.Status.FOUND).entity(result).build();
@@ -40,7 +40,7 @@ public class EntityResource {
 
     @GET
     @Timed
-    public Response getTest() {
+    public Response get() {
         List<Entity> result = service.getAll();
         if (result != null && result.size() > 0) {
             return Response.status(Response.Status.FOUND).entity(result).build();
@@ -53,7 +53,7 @@ public class EntityResource {
     @Path("{message}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Timed
-    public Response updateTest(@PathParam("message") String message, Entity entity) {
+    public Response update(@PathParam("message") String message, Entity entity) {
         Object result = service.updateEntity(message, entity);
         if (result != null) {
             return Response.status(Response.Status.OK).entity(entity).build();
@@ -65,7 +65,7 @@ public class EntityResource {
     @DELETE
     @Path("{message}")
     @Timed
-    public Response deleteTest(@PathParam("message") String message) {
+    public Response delete(@PathParam("message") String message) {
         if (service.deleteEntity(message)) {
             return Response.status(Response.Status.OK).build();
         } else {
