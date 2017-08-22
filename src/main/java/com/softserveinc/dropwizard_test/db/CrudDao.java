@@ -1,10 +1,10 @@
-package com.softserveinc.dropwizard_test.service;
+package com.softserveinc.dropwizard_test.db;
 
 import com.softserveinc.dropwizard_test.entity.Entity;
 
 import java.util.List;
 
-public interface BasicService<E> {
+public interface CrudDao<E> {
     void createEntity(E entity);
     E getEntity(String message);
     List<E> getAll();

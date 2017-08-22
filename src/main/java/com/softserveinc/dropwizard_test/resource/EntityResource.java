@@ -22,19 +22,15 @@ public class EntityResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Timed
     public Response addTest(Entity entity) {
-        Entity result = (Entity) service.createEntity(entity);
-        if (result != null) {
-            return Response.status(Response.Status.CREATED).entity(result).build();
-        } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
-        }
+        service.createEntity(entity);
+        return Response.status(Response.Status.CREATED).entity(entity).build();
     }
 
-    @Path("{id}")
     @GET
+    @Path("{message}")
     @Timed
-    public Response getByIdTest(@PathParam("id") Long id) {
-        Entity result = (Entity) service.getEntity(id);
+    public Response getByMessageTest(@PathParam("message") String message) {
+        Entity result = (Entity) service.getEntity(message);
         if (result != null) {
             return Response.status(Response.Status.FOUND).entity(result).build();
         } else {
@@ -53,31 +49,27 @@ public class EntityResource {
         }
     }
 
-    @Path("{id}")
     @PUT
+    @Path("{message}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Timed
-    public Response updateTest(@PathParam("id") Long id, Entity entity) {
-        if (getByIdTest(id).getEntity() != null) {
-            Entity result = (Entity) service.updateEntity(entity);
-            if (result != null) {
-                return Response.status(Response.Status.OK).entity(result).build();
-            } else {
-                return Response.status(Response.Status.BAD_REQUEST).build();
-            }
+    public Response updateTest(@PathParam("message") String message, Entity entity) {
+        Object result = service.updateEntity(message, entity);
+        if (result != null) {
+            return Response.status(Response.Status.OK).entity(entity).build();
         } else {
-            return addTest(entity);
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 
-    @Path("{id}")
     @DELETE
+    @Path("{message}")
     @Timed
-    public Response deleteTest(@PathParam("id") Long id) {
-        if (service.deleteEntity(id)) {
+    public Response deleteTest(@PathParam("message") String message) {
+        if (service.deleteEntity(message)) {
             return Response.status(Response.Status.OK).build();
         } else {
-            return Response.status(Response.Status.BAD_REQUEST).build();
+            return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 
