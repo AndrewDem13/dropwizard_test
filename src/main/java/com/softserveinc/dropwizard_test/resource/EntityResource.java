@@ -4,6 +4,7 @@ import com.codahale.metrics.annotation.Timed;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.BasicService;
 
+import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -12,8 +13,10 @@ import java.util.List;
 @Path("/test-entity")
 @Produces(MediaType.APPLICATION_JSON)
 public class EntityResource {
-    private BasicService service;
 
+    private final BasicService service;
+
+    @Inject
     public EntityResource(BasicService service) {
         this.service = service;
     }
@@ -72,5 +75,4 @@ public class EntityResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
-
 }

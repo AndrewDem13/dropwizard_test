@@ -5,3 +5,7 @@ server:
   adminConnectors:
   - type: http
     port: 9001
+
+mongohost: "localhost"
+mongoport: "27017"
+mongodb: "testDB"

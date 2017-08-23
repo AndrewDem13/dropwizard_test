@@ -2,20 +2,25 @@ package com.softserveinc.dropwizard_test.db.impl;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
 import com.softserveinc.dropwizard_test.db.EntityDao;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import org.bson.Document;
 
+import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MongoEntityDao extends EntityDao {
 
+    private final MongoDatabase mongoDatabase;
     private MongoCollection<Entity> collection;
 
-    public MongoEntityDao(MongoCollection<Entity> collection) {
-        this.collection = collection;
+    @Inject
+    public MongoEntityDao(MongoDatabase mongoDatabase) {
+        this.mongoDatabase = mongoDatabase;
+        this.collection = mongoDatabase.getCollection("entities", Entity.class);
     }
 
     @Override
