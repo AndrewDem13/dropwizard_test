@@ -1,7 +1,6 @@
 package com.softserveinc.dropwizard_test;
 
 import com.softserveinc.dropwizard_test.resource.EntityResource;
-import com.softserveinc.dropwizard_test.resource.IndexResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
@@ -23,6 +22,5 @@ public class App extends Application<AppConfiguration> {
 
         environment.jersey().register(new DependencyBinder(configuration));
         environment.jersey().register(EntityResource.class);
-        environment.jersey().register(IndexResource.class);
     }
 }

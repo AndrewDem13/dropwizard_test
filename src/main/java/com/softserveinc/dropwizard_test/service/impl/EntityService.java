@@ -1,43 +1,44 @@
 package com.softserveinc.dropwizard_test.service.impl;
 
-import com.softserveinc.dropwizard_test.db.EntityDao;
+import com.softserveinc.dropwizard_test.db.CrudDao;
+import com.softserveinc.dropwizard_test.db.impl.MongoEntityDao;
 import com.softserveinc.dropwizard_test.entity.Entity;
-import com.softserveinc.dropwizard_test.service.BasicService;
+import com.softserveinc.dropwizard_test.service.CrudService;
 
 import javax.inject.Inject;
 import java.util.List;
 
-public class EntityService implements BasicService<Entity> {
+public class EntityService implements CrudService<Entity> {
 
-    private final EntityDao entityDao;
+    private final MongoEntityDao dao;
 
     @Inject
-    public EntityService(EntityDao entityDao) {
-        this.entityDao = entityDao;
+    public EntityService(MongoEntityDao entityDao) {
+        this.dao = entityDao;
     }
 
     @Override
-    public void createEntity(Entity entity) {
-         entityDao.createEntity(entity);
+    public void create(Entity entity) {
+         dao.create(entity);
     }
 
     @Override
-    public Entity getEntity(String message) {
-        return entityDao.getEntity(message);
+    public Entity get(String message) {
+        return (Entity) dao.get(message);
     }
 
     @Override
     public List<Entity> getAll() {
-        return entityDao.getAll();
+        return dao.getAll();
     }
 
     @Override
-    public Entity updateEntity(String message, Entity entity) {
-        return entityDao.updateEntity(message, entity);
+    public Entity update(String message, Entity entity) {
+        return (Entity) dao.update(message, entity);
     }
 
     @Override
-    public boolean deleteEntity(String message) {
-        return entityDao.deleteEntity(message);
+    public boolean delete(String message) {
+        return dao.delete(message);
     }
 }

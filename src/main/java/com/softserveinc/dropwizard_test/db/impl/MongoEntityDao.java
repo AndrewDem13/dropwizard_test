@@ -4,15 +4,16 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.result.DeleteResult;
-import com.softserveinc.dropwizard_test.db.EntityDao;
+import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import org.bson.Document;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
 
-public class MongoEntityDao extends EntityDao {
+public class MongoEntityDao implements CrudDao<Entity> {
 
     private final MongoDatabase mongoDatabase;
     private MongoCollection<Entity> collection;
@@ -20,16 +21,20 @@ public class MongoEntityDao extends EntityDao {
     @Inject
     public MongoEntityDao(MongoDatabase mongoDatabase) {
         this.mongoDatabase = mongoDatabase;
+    }
+
+    @PostConstruct
+    void postconstruct() {
         this.collection = mongoDatabase.getCollection("entities", Entity.class);
     }
 
     @Override
-    public void createEntity(Entity entity) {
+    public void create(Entity entity) {
         collection.insertOne(entity);
     }
 
     @Override
-    public Entity getEntity(String message) {
+    public Entity get(String message) {
         return collection.find(new Document("message", message)).first();
     }
 
@@ -44,12 +49,12 @@ public class MongoEntityDao extends EntityDao {
     }
 
     @Override
-    public Entity updateEntity(String message, Entity entity) {
+    public Entity update(String message, Entity entity) {
         return collection.findOneAndReplace(new Document("message",message), entity);
     }
 
     @Override
-    public boolean deleteEntity(String message) {
+    public boolean delete(String message) {
         DeleteResult result = collection.deleteOne(new Document("message", message));
         return result.getDeletedCount() > 0;
     }

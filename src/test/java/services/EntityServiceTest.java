@@ -1,49 +1,54 @@
 package services;
 
-import com.softserveinc.dropwizard_test.db.EntityDao;
+import com.softserveinc.dropwizard_test.db.CrudDao;
+import com.softserveinc.dropwizard_test.db.impl.MongoEntityDao;
+import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 import org.junit.Test;
-import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.powermock.modules.junit4.PowerMockRunner;
 
-@RunWith(PowerMockRunner.class)
+import static org.mockito.Mockito.mock;
+
 public class EntityServiceTest {
     @Mock
-    private EntityDao entityDao;
+    private MongoEntityDao entityDao = mock(MongoEntityDao.class);
 
     @InjectMocks
-    private EntityService entityService;
+    private EntityService entityService = new EntityService(entityDao);
+
+
+    private Entity entity = mock(Entity.class);
+    private String string = "test";
 
     @Test
-    public void create() throws Exception {
-        entityService.createEntity(Mockito.any());
-        Mockito.verify(entityDao, Mockito.times(1)).createEntity(Mockito.any());
+    public void create() {
+        entityService.create(entity);
+        Mockito.verify(entityDao, Mockito.times(1)).create(entity);
     }
 
     @Test
-    public void readOne() throws Exception {
-        entityService.getEntity(Mockito.anyString());
-        Mockito.verify(entityDao, Mockito.times(1)).getEntity(Mockito.anyString());
+    public void readOne() {
+        entityService.get(string);
+        Mockito.verify(entityDao, Mockito.times(1)).get(string);
     }
 
     @Test
-    public void read() throws Exception {
+    public void read() {
         entityService.getAll();
         Mockito.verify(entityDao, Mockito.times(1)).getAll();
     }
 
     @Test
-    public void update() throws Exception {
-        entityService.updateEntity(Mockito.anyString(), Mockito.any());
-        Mockito.verify(entityDao, Mockito.times(1)).updateEntity(Mockito.anyString(), Mockito.any());
+    public void update() {
+        entityService.update(string, entity);
+        Mockito.verify(entityDao, Mockito.times(1)).update(string, entity);
     }
 
     @Test
-    public void delete() throws Exception {
-        entityService.deleteEntity(Mockito.anyString());
-        Mockito.verify(entityDao, Mockito.times(1)).deleteEntity(Mockito.anyString());
+    public void delete() {
+        entityService.delete(string);
+        Mockito.verify(entityDao, Mockito.times(1)).delete(string);
     }
 }
