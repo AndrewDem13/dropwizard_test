@@ -26,6 +26,7 @@ public class EntityResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Timed
     public Response add(Entity entity) {
+        // TODO normal ID validation
         if (entity.getId() == 0) {
             entity.setId(new Random().nextInt(1000));
         }

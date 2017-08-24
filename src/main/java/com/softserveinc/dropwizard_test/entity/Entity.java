@@ -1,18 +1,11 @@
 package com.softserveinc.dropwizard_test.entity;
 
-import java.util.Random;
-
 public class Entity {
 
     private int id;
     private String message;
 
     public Entity() {
-    }
-
-    public Entity(String message) {
-        this.message = message;
-        id = new Random().nextInt(1000);
     }
 
     public Entity(int id, String message) {
@@ -34,5 +27,21 @@ public class Entity {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Entity entity = (Entity) o;
+
+        if (getId() != entity.getId()) return false;
+        return getMessage() != null ? getMessage().equals(entity.getMessage()) : entity.getMessage() == null;
+    }
+
+    @Override
+    public int hashCode() {
+        return getId();
     }
 }

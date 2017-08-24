@@ -7,6 +7,8 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 public class AppConfiguration extends Configuration {
 
@@ -15,10 +17,8 @@ public class AppConfiguration extends Configuration {
     public String mongohost;
 
     @JsonProperty
-    @NotEmpty
-    @Min(1)
-    @Max(65535)
-    public int mongoport;
+    @NotNull
+    public Integer mongoport;
 
     @JsonProperty
     @NotEmpty
