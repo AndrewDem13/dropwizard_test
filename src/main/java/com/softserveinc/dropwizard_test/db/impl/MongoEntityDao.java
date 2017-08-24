@@ -24,8 +24,9 @@ public class MongoEntityDao implements CrudDao<Entity> {
     }
 
     @PostConstruct
-    void postconstruct() {
-        this.collection = mongoDatabase.getCollection("entities", Entity.class);
+    void postConstruct() {
+        String collectionName = Entity.class.getSimpleName().toLowerCase();
+        this.collection = mongoDatabase.getCollection(collectionName, Entity.class);
     }
 
     @Override
@@ -34,8 +35,8 @@ public class MongoEntityDao implements CrudDao<Entity> {
     }
 
     @Override
-    public Entity get(String message) {
-        return collection.find(new Document("message", message)).first();
+    public Entity get(int id) {
+        return collection.find(new Document("_id", id)).first();
     }
 
     @Override
@@ -49,13 +50,13 @@ public class MongoEntityDao implements CrudDao<Entity> {
     }
 
     @Override
-    public Entity update(String message, Entity entity) {
-        return collection.findOneAndReplace(new Document("message",message), entity);
+    public Entity update(int id, Entity entity) {
+        return collection.findOneAndReplace(new Document("_id",id), entity);
     }
 
     @Override
-    public boolean delete(String message) {
-        DeleteResult result = collection.deleteOne(new Document("message", message));
+    public boolean delete(int id) {
+        DeleteResult result = collection.deleteOne(new Document("_id", id));
         return result.getDeletedCount() > 0;
     }
 }

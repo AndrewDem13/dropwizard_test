@@ -20,17 +20,17 @@ public class EntityResourceTest {
             .addResource(new EntityResource(entityService))
             .build();
 
-    private static final Entity entity = new Entity("test");
-    private static final String path = entity.getMessage();
-    private static final Entity updatedEntity = new Entity("updated");
+    private static final Entity entity = new Entity(1,"test");
+    private static final String path = String.valueOf(entity.getId());
+    private static final Entity updatedEntity = new Entity(entity.getId(), "updated");
     private static final ImmutableList<Entity> list = ImmutableList.of(entity);
 
     @Before
     public void setUp() throws Exception {
         when(entityService.getAll()).thenReturn(list);
-        when(entityService.get(anyString())).thenReturn(entity);
-        when(entityService.delete(entity.getMessage())).thenReturn(true);
-        when(entityService.update(anyString(), any())).thenReturn(updatedEntity);
+        when(entityService.get(entity.getId())).thenReturn(entity);
+        when(entityService.delete(anyInt())).thenReturn(true);
+        when(entityService.update(anyInt(), any(Entity.class))).thenReturn(updatedEntity);
     }
 
     @After
@@ -39,34 +39,33 @@ public class EntityResourceTest {
     }
 
     @Test
-    public void testDeleteEntity() {
-        Response response = resources.target("/test-entity/" + path).request().delete();
+    public void delete() {
+        Response response = resources.target("/entity/" + path).request().delete();
         Assert.assertEquals(200, response.getStatus());
     }
 
     @Test
-    public void testGetAllEntities() {
-        Response response = resources.target("/test-entity").request().get();
-        Assert.assertEquals(302, response.getStatus());
+    public void getAll() {
+        Response response = resources.target("/entity").request().get();
+        Assert.assertEquals(200, response.getStatus());
     }
 
     @Test
-    public void testGetEntity() {
-        Entity entity = resources.client().target("/test-entity").path(path).request().get(Entity.class);
-
-        Response response = resources.target("/test-entity/" + path).request().get();
-        Assert.assertEquals(302, response.getStatus());
+    public void get() {
+        Response response = resources.target("/entity/" + path).request().get();
+        Assert.assertEquals(200, response.getStatus());
     }
 
     @Test
-    public void createEntity() {
-        Response post = resources.target("/test-entity").request().post(javax.ws.rs.client.Entity.json(entity));
+    public void create() {
+        Response post = resources.target("/entity").request().post(javax.ws.rs.client.Entity.json(entity));
         Assert.assertEquals(201, post.getStatus());
     }
 
     @Test
-    public void updateTest() {
-        Response updated = resources.target("/test-entity/" + path).request().put(javax.ws.rs.client.Entity.json(new Entity("updated")));
+    public void update() {
+        Response updated = resources.target("/entity/" + path).request()
+                                    .put(javax.ws.rs.client.Entity.json(updatedEntity));
         Assert.assertEquals(200, updated.getStatus());
     }
 }

@@ -19,7 +19,6 @@ public class App extends Application<AppConfiguration> {
 
     @Override
     public void run(AppConfiguration configuration, Environment environment) throws Exception {
-
         environment.jersey().register(new DependencyBinder(configuration));
         environment.jersey().register(EntityResource.class);
     }

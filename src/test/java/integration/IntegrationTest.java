@@ -15,12 +15,12 @@ import javax.ws.rs.core.Response;
 
 public class IntegrationTest {
     @Rule
-    public final DropwizardAppRule<AppConfiguration> rule = new DropwizardAppRule<AppConfiguration>(App.class, new AppConfiguration());
+    public final DropwizardAppRule<AppConfiguration> rule = new DropwizardAppRule<AppConfiguration>(App.class);
 
     @Test
     public void runTest() {
         Client client = new JerseyClientBuilder().build();
-        Response response = client.target(String.format(("http://localhost:%d/test-entity"), rule.getLocalPort())).request().get();
+        Response response = client.target(String.format(("http://localhost:%d/entity"), rule.getLocalPort())).request().get();
         Assert.assertEquals(200, response.getStatus());
     }
 }

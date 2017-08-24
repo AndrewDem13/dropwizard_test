@@ -2,7 +2,6 @@ package com.softserveinc.dropwizard_test.resource;
 
 import com.codahale.metrics.annotation.Timed;
 import com.softserveinc.dropwizard_test.entity.Entity;
-import com.softserveinc.dropwizard_test.service.CrudService;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 
 import javax.inject.Inject;
@@ -10,8 +9,9 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Random;
 
-@Path("/test-entity")
+@Path("/entity")
 @Produces(MediaType.APPLICATION_JSON)
 public class EntityResource {
 
@@ -26,17 +26,20 @@ public class EntityResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Timed
     public Response add(Entity entity) {
+        if (entity.getId() == 0) {
+            entity.setId(new Random().nextInt(1000));
+        }
         service.create(entity);
         return Response.status(Response.Status.CREATED).entity(entity).build();
     }
 
     @GET
-    @Path("{message}")
+    @Path("{id}")
     @Timed
-    public Response getByMessage(@PathParam("message") String message) {
-        Entity result = (Entity) service.get(message);
+    public Response getById(@PathParam("id") int id) {
+        Entity result = service.get(id);
         if (result != null) {
-            return Response.status(Response.Status.FOUND).entity(result).build();
+            return Response.status(Response.Status.OK).entity(result).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -47,18 +50,18 @@ public class EntityResource {
     public Response get() {
         List<Entity> result = service.getAll();
         if (result != null && result.size() > 0) {
-            return Response.status(Response.Status.FOUND).entity(result).build();
+            return Response.status(Response.Status.OK).entity(result).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
     }
 
     @PUT
-    @Path("{message}")
+    @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
     @Timed
-    public Response update(@PathParam("message") String message, Entity entity) {
-        Object result = service.update(message, entity);
+    public Response update(@PathParam("id") int id, Entity entity) {
+        Object result = service.update(id, entity);
         if (result != null) {
             return Response.status(Response.Status.OK).entity(entity).build();
         } else {
@@ -67,10 +70,10 @@ public class EntityResource {
     }
 
     @DELETE
-    @Path("{message}")
+    @Path("{id}")
     @Timed
-    public Response delete(@PathParam("message") String message) {
-        if (service.delete(message)) {
+    public Response delete(@PathParam("id") int id) {
+        if (service.delete(id)) {
             return Response.status(Response.Status.OK).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();

@@ -4,8 +4,8 @@ import java.util.List;
 
 public interface CrudDao<E> {
     void create(E entity);
-    E get(String message);
+    E get(int id);
     List<E> getAll();
-    E update(String message, E entity);
-    boolean delete(String message);
+    E update(int id, E entity);
+    boolean delete(int id);
 }

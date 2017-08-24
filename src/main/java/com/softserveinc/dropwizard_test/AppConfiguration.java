@@ -15,6 +15,7 @@ public class AppConfiguration extends Configuration {
     public String mongohost;
 
     @JsonProperty
+    @NotEmpty
     @Min(1)
     @Max(65535)
     public int mongoport;

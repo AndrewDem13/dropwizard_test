@@ -1,6 +1,5 @@
 package services;
 
-import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.db.impl.MongoEntityDao;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
@@ -20,7 +19,7 @@ public class EntityServiceTest {
 
 
     private Entity entity = mock(Entity.class);
-    private String string = "test";
+    private int id = 1;
 
     @Test
     public void create() {
@@ -30,8 +29,8 @@ public class EntityServiceTest {
 
     @Test
     public void readOne() {
-        entityService.get(string);
-        Mockito.verify(entityDao, Mockito.times(1)).get(string);
+        entityService.get(id);
+        Mockito.verify(entityDao, Mockito.times(1)).get(id);
     }
 
     @Test
@@ -42,13 +41,13 @@ public class EntityServiceTest {
 
     @Test
     public void update() {
-        entityService.update(string, entity);
-        Mockito.verify(entityDao, Mockito.times(1)).update(string, entity);
+        entityService.update(id, entity);
+        Mockito.verify(entityDao, Mockito.times(1)).update(id, entity);
     }
 
     @Test
     public void delete() {
-        entityService.delete(string);
-        Mockito.verify(entityDao, Mockito.times(1)).delete(string);
+        entityService.delete(id);
+        Mockito.verify(entityDao, Mockito.times(1)).delete(id);
     }
 }

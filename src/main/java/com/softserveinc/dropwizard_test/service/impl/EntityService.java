@@ -1,6 +1,5 @@
 package com.softserveinc.dropwizard_test.service.impl;
 
-import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.db.impl.MongoEntityDao;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.CrudService;
@@ -23,8 +22,8 @@ public class EntityService implements CrudService<Entity> {
     }
 
     @Override
-    public Entity get(String message) {
-        return (Entity) dao.get(message);
+    public Entity get(int id) {
+        return dao.get(id);
     }
 
     @Override
@@ -33,12 +32,12 @@ public class EntityService implements CrudService<Entity> {
     }
 
     @Override
-    public Entity update(String message, Entity entity) {
-        return (Entity) dao.update(message, entity);
+    public Entity update(int id, Entity entity) {
+        return dao.update(id, entity);
     }
 
     @Override
-    public boolean delete(String message) {
-        return dao.delete(message);
+    public boolean delete(int id) {
+        return dao.delete(id);
     }
 }

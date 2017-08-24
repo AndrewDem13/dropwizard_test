@@ -3,6 +3,7 @@ package com.softserveinc.dropwizard_test.healthChecks;
 import com.codahale.metrics.health.HealthCheck;
 import com.mongodb.client.MongoDatabase;
 
+@Deprecated
 public class MongoHealthCheck extends HealthCheck {
     private MongoDatabase mongo;
 
