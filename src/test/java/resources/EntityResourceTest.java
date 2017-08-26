@@ -4,8 +4,8 @@ import com.google.common.collect.ImmutableList;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.resource.EntityResource;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
-import org.junit.*;
 import io.dropwizard.testing.junit.ResourceTestRule;
+import org.junit.*;
 
 import javax.ws.rs.core.Response;
 

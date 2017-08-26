@@ -1,25 +1,16 @@
 package integration;
 
-import com.mongodb.MongoClient;
-import com.mongodb.client.MongoDatabase;
 import com.softserveinc.dropwizard_test.App;
 import com.softserveinc.dropwizard_test.AppConfiguration;
 import com.softserveinc.dropwizard_test.entity.Entity;
-import com.softserveinc.dropwizard_test.resource.EntityResource;
 import io.dropwizard.testing.ResourceHelpers;
 import io.dropwizard.testing.junit.DropwizardAppRule;
-import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.configuration.CodecRegistry;
-import org.bson.codecs.pojo.PojoCodecProvider;
-import org.glassfish.jersey.client.JerseyClient;
-import org.glassfish.jersey.client.JerseyClientBuilder;
-import org.junit.*;
+import org.junit.Assert;
+import org.junit.ClassRule;
+import org.junit.Test;
 
-import javax.ws.rs.client.Client;
 import javax.ws.rs.core.GenericType;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.ArrayList;
 import java.util.List;
 
 public class IntegrationTest {
@@ -35,7 +26,7 @@ public class IntegrationTest {
     @Test
     public void _01create() {
         Response response = RULE.client()
-                .target(String.format(("http://localhost:%d/entity"), RULE.getLocalPort()))
+                .target(String.format(("http://localhost:%d/entity/"), RULE.getLocalPort()))
                 .request()
                 .post(javax.ws.rs.client.Entity.json(entity));
 
@@ -55,14 +46,13 @@ public class IntegrationTest {
                 .request()
                 .get()
                 .readEntity(Entity.class);
-
         Assert.assertEquals(entity, readEntity);
     }
 
     @Test
     public void _03readAll() {
         List<Entity> entities = RULE.client()
-                .target(String.format(("http://localhost:%d/entity"), RULE.getLocalPort()))
+                .target(String.format(("http://localhost:%d/entity/"), RULE.getLocalPort()))
                 .request()
                 .get()
                 .readEntity(new GenericType<List<Entity>>(){});
@@ -79,6 +69,7 @@ public class IntegrationTest {
                 .request()
                 .put(javax.ws.rs.client.Entity.json(newEntity))
                 .readEntity(Entity.class);
+
         Assert.assertEquals(newEntity, updated);
         Assert.assertEquals(entity.getId(), updated.getId());
     }
@@ -90,5 +81,11 @@ public class IntegrationTest {
                 .request()
                 .delete();
         Assert.assertEquals(200, response.getStatus());
+
+        Response readResponse = RULE.client()
+                .target(String.format(("http://localhost:%d/entity/%s"), RULE.getLocalPort(), String.valueOf(entity.getId())))
+                .request()
+                .get();
+        Assert.assertEquals(404, readResponse.getStatus());
     }
 }

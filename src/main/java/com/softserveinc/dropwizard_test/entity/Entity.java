@@ -1,6 +1,8 @@
 package com.softserveinc.dropwizard_test.entity;
 
-public class Entity {
+import java.io.Serializable;
+
+public class Entity implements Serializable{
 
     private int id;
     private String message;
