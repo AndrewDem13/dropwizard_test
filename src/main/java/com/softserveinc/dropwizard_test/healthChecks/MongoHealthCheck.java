@@ -1,20 +1,26 @@
 package com.softserveinc.dropwizard_test.healthChecks;
 
 import com.codahale.metrics.health.HealthCheck;
+import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
-@Deprecated
 public class MongoHealthCheck extends HealthCheck {
-    private MongoDatabase mongo;
+    private MongoClient mongoClient;
+    private MongoDatabase database;
 
-    public MongoHealthCheck(MongoDatabase mongo) {
-        super();
-        this.mongo = mongo;
+    public MongoHealthCheck(MongoClient mongoClient) {
+        this.mongoClient = mongoClient;
     }
 
     @Override
     protected Result check() throws Exception {
-        mongo.listCollections();
+        try {
+            database = mongoClient.getDatabase("healthCheck");
+            database.createCollection("test");
+        } catch (Exception e) {
+            return Result.unhealthy("Can't connect to Mongo server");
+        }
+        database.drop();
         return Result.healthy();
     }
 }
