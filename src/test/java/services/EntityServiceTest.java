@@ -1,6 +1,5 @@
 package services;
 
-import com.softserveinc.dropwizard_test.db.impl.MongoEntityDao;
 import com.softserveinc.dropwizard_test.db.impl.MongoEntityDaoAdapter;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
@@ -18,20 +17,25 @@ public class EntityServiceTest {
     @InjectMocks
     private EntityService entityService = new EntityService(entityDao);
 
-
-    private Entity entity = mock(Entity.class);
-    private int id = 1;
+    private final static int ID = 1;
+    private Entity entity = new Entity(ID, "test");
 
     @Test
     public void create() {
+        Mockito.when(entityDao.get(ID)).thenReturn(null);
         entityService.create(entity);
+
+        Mockito.when(entityDao.get(ID)).thenReturn(entity);
+        entityService.create(entity);
+
         Mockito.verify(entityDao, Mockito.times(1)).create(entity);
+        Mockito.verify(entityDao, Mockito.times(1)).update(ID, entity);
     }
 
     @Test
     public void readOne() {
-        entityService.get(id);
-        Mockito.verify(entityDao, Mockito.times(1)).get(id);
+        entityService.get(ID);
+        Mockito.verify(entityDao, Mockito.times(1)).get(ID);
     }
 
     @Test
@@ -42,13 +46,19 @@ public class EntityServiceTest {
 
     @Test
     public void update() {
-        entityService.update(id, entity);
-        Mockito.verify(entityDao, Mockito.times(1)).update(id, entity);
+        Mockito.when(entityDao.get(ID)).thenReturn(entity);
+        entityService.update(ID, entity);
+
+        Mockito.when(entityDao.get(ID)).thenReturn(null);
+        entityService.update(ID, entity);
+
+        Mockito.verify(entityDao, Mockito.times(1)).update(ID, entity);
+        Mockito.verify(entityDao, Mockito.times(1)).create(entity);
     }
 
     @Test
     public void delete() {
-        entityService.delete(id);
-        Mockito.verify(entityDao, Mockito.times(1)).delete(id);
+        entityService.delete(ID);
+        Mockito.verify(entityDao, Mockito.times(1)).delete(ID);
     }
 }

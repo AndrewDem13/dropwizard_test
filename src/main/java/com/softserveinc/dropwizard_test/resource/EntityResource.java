@@ -62,6 +62,7 @@ public class EntityResource {
     @Consumes({MediaType.APPLICATION_JSON})
     @Timed
     public Response update(@PathParam("id") int id, Entity entity) {
+        entity.setId(id);
         Object result = service.update(id, entity);
         if (result != null) {
             return Response.status(Response.Status.OK).entity(entity).build();

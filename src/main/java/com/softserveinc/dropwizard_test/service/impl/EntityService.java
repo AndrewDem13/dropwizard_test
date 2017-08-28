@@ -18,7 +18,11 @@ public class EntityService implements CrudService<Entity> {
 
     @Override
     public void create(Entity entity) {
-         dao.create(entity);
+        if (dao.get(entity.getId()) == null) {
+            dao.create(entity);
+        } else {
+            dao.update(entity.getId(), entity);
+        }
     }
 
     @Override
@@ -33,7 +37,12 @@ public class EntityService implements CrudService<Entity> {
 
     @Override
     public Entity update(int id, Entity entity) {
-        return dao.update(id, entity);
+        if (dao.get(id) != null) {
+            return dao.update(id, entity);
+        } else {
+            dao.create(entity);
+            return entity;
+        }
     }
 
     @Override
