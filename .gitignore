@@ -4,6 +4,7 @@
 # User-specific stuff:
 /.idea/
 .idea/dictionaries
+.idea/libraries
 
 #Maven
 target/
