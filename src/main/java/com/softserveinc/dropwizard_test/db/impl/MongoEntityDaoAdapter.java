@@ -1,43 +1,42 @@
-package com.softserveinc.dropwizard_test.service.impl;
+package com.softserveinc.dropwizard_test.db.impl;
 
 import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.entity.Entity;
-import com.softserveinc.dropwizard_test.service.CrudService;
 
 import javax.inject.Inject;
 import java.util.List;
 
-public class EntityService implements CrudService<Entity> {
+public class MongoEntityDaoAdapter implements CrudDao<Entity> {
 
-    private final CrudDao<Entity> dao;
+    private MongoEntityDao mongoEntityDao;
 
     @Inject
-    public EntityService(CrudDao<Entity> dao) {
-        this.dao = dao;
+    public MongoEntityDaoAdapter(MongoEntityDao mongoEntityDao) {
+        this.mongoEntityDao = mongoEntityDao;
     }
 
     @Override
     public void create(Entity entity) {
-         dao.create(entity);
+        mongoEntityDao.create(entity);
     }
 
     @Override
     public Entity get(int id) {
-        return dao.get(id);
+        return mongoEntityDao.get(id);
     }
 
     @Override
     public List<Entity> getAll() {
-        return dao.getAll();
+        return mongoEntityDao.getAll();
     }
 
     @Override
     public Entity update(int id, Entity entity) {
-        return dao.update(id, entity);
+        return mongoEntityDao.update(id, entity);
     }
 
     @Override
     public boolean delete(int id) {
-        return dao.delete(id);
+        return mongoEntityDao.delete(id);
     }
 }

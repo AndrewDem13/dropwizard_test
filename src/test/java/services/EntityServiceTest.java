@@ -1,6 +1,7 @@
 package services;
 
 import com.softserveinc.dropwizard_test.db.impl.MongoEntityDao;
+import com.softserveinc.dropwizard_test.db.impl.MongoEntityDaoAdapter;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 import org.junit.Test;
@@ -12,7 +13,7 @@ import static org.mockito.Mockito.mock;
 
 public class EntityServiceTest {
     @Mock
-    private MongoEntityDao entityDao = mock(MongoEntityDao.class);
+    private MongoEntityDaoAdapter entityDao = mock(MongoEntityDaoAdapter.class);
 
     @InjectMocks
     private EntityService entityService = new EntityService(entityDao);
