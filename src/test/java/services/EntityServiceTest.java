@@ -29,7 +29,7 @@ public class EntityServiceTest {
         entityService.create(entity);
 
         Mockito.verify(entityDao, Mockito.times(1)).create(entity);
-        Mockito.verify(entityDao, Mockito.times(1)).update(ID, entity);
+        Mockito.verify(entityDao, Mockito.times(1)).update(entity);
     }
 
     @Test
@@ -47,12 +47,12 @@ public class EntityServiceTest {
     @Test
     public void update() {
         Mockito.when(entityDao.get(ID)).thenReturn(entity);
-        entityService.update(ID, entity);
+        entityService.update(entity);
 
         Mockito.when(entityDao.get(ID)).thenReturn(null);
-        entityService.update(ID, entity);
+        entityService.update(entity);
 
-        Mockito.verify(entityDao, Mockito.times(1)).update(ID, entity);
+        Mockito.verify(entityDao, Mockito.times(1)).update(entity);
         Mockito.verify(entityDao, Mockito.times(1)).create(entity);
     }
 

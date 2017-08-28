@@ -31,8 +31,8 @@ public class MongoEntityDaoAdapter implements CrudDao<Entity> {
     }
 
     @Override
-    public Entity update(int id, Entity entity) {
-        return mongoEntityDao.update(id, entity);
+    public Entity update(Entity entity) {
+        return mongoEntityDao.update(entity);
     }
 
     @Override

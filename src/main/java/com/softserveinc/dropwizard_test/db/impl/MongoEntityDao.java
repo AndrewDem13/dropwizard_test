@@ -45,8 +45,8 @@ public class MongoEntityDao {
         return result;
     }
 
-    public Entity update(int id, Entity entity) {
-        return collection.findOneAndReplace(new Document("_id",id), entity);
+    public Entity update(Entity entity) {
+        return collection.findOneAndReplace(new Document("_id", entity.getId()), entity);
     }
 
     public boolean delete(int id) {

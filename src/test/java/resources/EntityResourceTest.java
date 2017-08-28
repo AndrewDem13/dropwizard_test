@@ -30,7 +30,7 @@ public class EntityResourceTest {
         when(entityService.getAll()).thenReturn(list);
         when(entityService.get(entity.getId())).thenReturn(entity);
         when(entityService.delete(anyInt())).thenReturn(true);
-        when(entityService.update(anyInt(), any(Entity.class))).thenReturn(updatedEntity);
+        when(entityService.update(any(Entity.class))).thenReturn(updatedEntity);
     }
 
     @After

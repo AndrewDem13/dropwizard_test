@@ -6,6 +6,6 @@ public interface CrudService<E> {
     void create(E entity);
     E get(int id);
     List<E> getAll();
-    E update(int id, E entity);
+    E update(E entity);
     boolean delete(int id);
 }

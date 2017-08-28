@@ -21,7 +21,7 @@ public class EntityService implements CrudService<Entity> {
         if (dao.get(entity.getId()) == null) {
             dao.create(entity);
         } else {
-            dao.update(entity.getId(), entity);
+            dao.update(entity);
         }
     }
 
@@ -36,9 +36,9 @@ public class EntityService implements CrudService<Entity> {
     }
 
     @Override
-    public Entity update(int id, Entity entity) {
-        if (dao.get(id) != null) {
-            return dao.update(id, entity);
+    public Entity update(Entity entity) {
+        if (dao.get(entity.getId()) != null) {
+            return dao.update(entity);
         } else {
             dao.create(entity);
             return entity;

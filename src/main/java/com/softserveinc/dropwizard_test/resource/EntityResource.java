@@ -63,7 +63,7 @@ public class EntityResource {
     @Timed
     public Response update(@PathParam("id") int id, Entity entity) {
         entity.setId(id);
-        Object result = service.update(id, entity);
+        Object result = service.update(entity);
         if (result != null) {
             return Response.status(Response.Status.OK).entity(entity).build();
         } else {
