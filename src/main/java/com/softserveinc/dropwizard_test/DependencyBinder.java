@@ -23,8 +23,7 @@ public class DependencyBinder extends AbstractBinder {
     protected void configure() {
         CodecRegistry pojoCodecRegistry = CodecRegistries.fromRegistries(MongoClient.getDefaultCodecRegistry(),
                 CodecRegistries.fromProviders(PojoCodecProvider.builder().automatic(true).build()));
-        MongoClient mongoClient = new MongoClient(configuration.mongohost, configuration.mongoport);
-        MongoDatabase database = mongoClient.getDatabase(configuration.mongodb).withCodecRegistry(pojoCodecRegistry);
+        MongoDatabase database = configuration.getMongoClient().getDatabase(configuration.mongodb).withCodecRegistry(pojoCodecRegistry);
 
         bind(database).to(MongoDatabase.class);
         bind(MongoEntityDao.class).to(MongoEntityDao.class).in(Singleton.class);
