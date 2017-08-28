@@ -1,11 +1,14 @@
 package com.softserveinc.dropwizard_test;
 
+import com.codahale.metrics.ConsoleReporter;
 import com.mongodb.MongoClient;
 import com.softserveinc.dropwizard_test.healthChecks.MongoHealthCheck;
 import com.softserveinc.dropwizard_test.resource.EntityResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class App extends Application<AppConfiguration> {
@@ -28,5 +31,13 @@ public class App extends Application<AppConfiguration> {
 
         environment.jersey().register(new DependencyBinder(configuration));
         environment.jersey().register(EntityResource.class);
+
+        // Metrics' reporting to the console
+        ConsoleReporter reporter = ConsoleReporter
+                .forRegistry(environment.metrics())
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .build();
+        reporter.start(10, TimeUnit.SECONDS);
     }
 }
