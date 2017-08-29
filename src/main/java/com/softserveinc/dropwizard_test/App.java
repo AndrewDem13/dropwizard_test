@@ -33,11 +33,11 @@ public class App extends Application<AppConfiguration> {
         environment.jersey().register(EntityResource.class);
 
         // Metrics' reporting to the console
-        ConsoleReporter reporter = ConsoleReporter
-                .forRegistry(environment.metrics())
-                .convertRatesTo(TimeUnit.SECONDS)
-                .convertDurationsTo(TimeUnit.MILLISECONDS)
-                .build();
-        reporter.start(10, TimeUnit.SECONDS);
+//        ConsoleReporter reporter = ConsoleReporter
+//                .forRegistry(environment.metrics())
+//                .convertRatesTo(TimeUnit.SECONDS)
+//                .convertDurationsTo(TimeUnit.MILLISECONDS)
+//                .build();
+//        reporter.start(10, TimeUnit.SECONDS);
     }
 }
