@@ -26,6 +26,7 @@
         <mockito.version>1.10.19</mockito.version>
         <junit.version>4.12</junit.version>
         <okhttp.version>3.8.1</okhttp.version>
+        <embeded.mongo.version>2.0.0</embeded.mongo.version>
     </properties>
 
     <dependencies>
@@ -45,6 +46,13 @@
             <groupId>org.mongodb</groupId>
             <artifactId>mongodb-driver</artifactId>
             <version>${mongo.driver.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>de.flapdoodle.embed</groupId>
+            <artifactId>de.flapdoodle.embed.mongo</artifactId>
+            <version>${embeded.mongo.version}</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
