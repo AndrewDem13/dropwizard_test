@@ -1,6 +1,6 @@
 package services;
 
-import com.softserveinc.dropwizard_test.db.impl.MongoEntityDaoAdapter;
+import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDaoAdapter;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 import org.junit.Test;

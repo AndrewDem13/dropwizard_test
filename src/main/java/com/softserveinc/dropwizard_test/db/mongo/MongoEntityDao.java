@@ -1,4 +1,4 @@
-package com.softserveinc.dropwizard_test.db.impl;
+package com.softserveinc.dropwizard_test.db.mongo;
 
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;

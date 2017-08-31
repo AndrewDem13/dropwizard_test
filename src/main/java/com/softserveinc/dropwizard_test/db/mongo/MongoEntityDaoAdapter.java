@@ -1,4 +1,4 @@
-package com.softserveinc.dropwizard_test.db.impl;
+package com.softserveinc.dropwizard_test.db.mongo;
 
 import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.entity.Entity;

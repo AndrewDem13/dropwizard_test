@@ -1,0 +1,24 @@
+<!DOCTYPE mapper     PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.softserveinc.dropwizard_test.db.myBatis.mappers.EntityMapper">
+
+    <insert id="create" parameterType="Entity">
+        insert into entity(id, message) values (#{id}, #{message})
+    </insert>
+
+    <select id="get" parameterType="java.lang.Integer" resultType="Entity"> <!--тип входящих параметров, может быть поистине разнообразным, начиная от Map и заканчивая EntityBean.-->
+        select * from entity where id = #{id}  <!-- поле в фигурных скобках это параметр, который прилетел в метод. Если это Map — то {имя} это ключ к переменной. Если в метод передаем EntityBean то {имя} — это название переменной данного bean.-->
+    </select>
+
+    <select id="getAll" resultType="Entity">
+        select * from entity
+    </select>
+
+    <update id="update" parameterType="Entity">
+        update entity set message = #{message} where id = #{id}
+    </update>
+
+    <delete id="delete" parameterType="java.lang.Integer">
+        delete from entity where id = #{id}
+    </delete>
+
+</mapper>
