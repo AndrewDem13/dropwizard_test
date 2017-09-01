@@ -1,12 +1,16 @@
 package services;
 
+import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDaoAdapter;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
+import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+
+import javax.inject.Provider;
 
 import static org.mockito.Mockito.mock;
 
@@ -14,11 +18,19 @@ public class EntityServiceTest {
     @Mock
     private MongoEntityDaoAdapter entityDao = mock(MongoEntityDaoAdapter.class);
 
+    @Mock
+    private Provider<CrudDao<Entity>> daoProvider = mock(Provider.class);
+
     @InjectMocks
-    private EntityService entityService = new EntityService(entityDao);
+    private EntityService entityService = new EntityService(daoProvider);
 
     private final static int ID = 1;
     private Entity entity = new Entity(ID, "test");
+
+    @Before
+    public void setUp() throws Exception {
+        Mockito.when(daoProvider.get()).thenReturn(entityDao);
+    }
 
     @Test
     public void create() {
