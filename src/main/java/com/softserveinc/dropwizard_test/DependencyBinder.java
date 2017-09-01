@@ -6,6 +6,9 @@ import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDaoAdapter;
 import com.softserveinc.dropwizard_test.db.myBatis.CustomSqlSessionFactory;
+import com.softserveinc.dropwizard_test.db.myBatis.MyBatisEntityDaoAdapter;
+import com.softserveinc.dropwizard_test.db.util.DaoFactory;
+import com.softserveinc.dropwizard_test.db.util.DbSwitcher;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 import org.apache.ibatis.io.Resources;
@@ -19,8 +22,11 @@ import org.glassfish.hk2.api.TypeLiteral;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
 
 import javax.inject.Singleton;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.management.ManagementFactory;
 
 public class DependencyBinder extends AbstractBinder {
 
@@ -55,9 +61,23 @@ public class DependencyBinder extends AbstractBinder {
             bindFactory(new CustomSqlSessionFactory(sqlSessionFactory)).to(SqlSession.class);
         }
 
-        //bind(MyBatisEntityDaoAdapter.class).to(new TypeLiteral<CrudDao<Entity>>(){}).in(Singleton.class);
-        bind(MongoEntityDaoAdapter.class).to(new TypeLiteral<CrudDao<Entity>>(){}).in(Singleton.class);
+        /*
+        DB Switcher configuration
+        NoSQL (MongoDB) is default
+         */
+        DbSwitcher dbSwitcher = new DbSwitcher();
+        MBeanServer platformMBeanServer = ManagementFactory.getPlatformMBeanServer();
+        try {
+            platformMBeanServer.registerMBean(dbSwitcher, new ObjectName("DbSwitcher", "name", "DbSwitcher"));
+        } catch (Exception e) {
+            System.out.println("Error occurred while registering DB MBean util: " + e.getMessage());
+        }
+        bind(dbSwitcher).to(DbSwitcher.class);
+        bindFactory(DaoFactory.class).to(new TypeLiteral<CrudDao<Entity>>() {});
+
         bind(MongoEntityDao.class).to(MongoEntityDao.class).in(Singleton.class);
+        bind(MongoEntityDaoAdapter.class).to(MongoEntityDaoAdapter.class).in(Singleton.class);
+        bind(MyBatisEntityDaoAdapter.class).to(MyBatisEntityDaoAdapter.class).in(Singleton.class);
         bind(EntityService.class).to(EntityService.class).in(Singleton.class);
     }
 }
