@@ -6,7 +6,6 @@ import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDaoAdapter;
 import com.softserveinc.dropwizard_test.db.myBatis.CustomSqlSessionFactory;
-import com.softserveinc.dropwizard_test.db.myBatis.MyBatisEntityDaoAdapter;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 import org.apache.ibatis.io.Resources;
@@ -50,14 +49,14 @@ public class DependencyBinder extends AbstractBinder {
             InputStream configStream = Resources.getResourceAsStream(myBatisConfigPath);
             sqlSessionFactory = new SqlSessionFactoryBuilder().build(configStream);
         } catch (IOException e) {
-            System.out.println("========= error occurred while reading MyBatis config file: " + e.getMessage());
+            System.out.println("Error occurred while reading MyBatis config file: " + e.getMessage());
         }
         if (sqlSessionFactory != null) {
             bindFactory(new CustomSqlSessionFactory(sqlSessionFactory)).to(SqlSession.class);
         }
 
-        bind(MyBatisEntityDaoAdapter.class).to(new TypeLiteral<CrudDao<Entity>>(){}).in(Singleton.class);
-        //bind(MongoEntityDaoAdapter.class).to(new TypeLiteral<CrudDao<Entity>>(){}).in(Singleton.class);
+        //bind(MyBatisEntityDaoAdapter.class).to(new TypeLiteral<CrudDao<Entity>>(){}).in(Singleton.class);
+        bind(MongoEntityDaoAdapter.class).to(new TypeLiteral<CrudDao<Entity>>(){}).in(Singleton.class);
         bind(MongoEntityDao.class).to(MongoEntityDao.class).in(Singleton.class);
         bind(EntityService.class).to(EntityService.class).in(Singleton.class);
     }

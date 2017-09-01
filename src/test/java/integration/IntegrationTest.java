@@ -80,7 +80,7 @@ public class IntegrationTest {
                 .get()
                 .readEntity(new GenericType<List<Entity>>(){});
 
-        Assert.assertEquals(1, entities.size());
+        Assert.assertNotNull(entities);
         Assert.assertEquals(entity, entities.get(0));
     }
 

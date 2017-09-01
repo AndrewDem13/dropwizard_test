@@ -93,7 +93,7 @@ public class OkHttpClientTest {
 
         Assert.assertEquals(200, response.code());
         List readEntities = MAPPER.readValue(response.body().string(), new TypeReference<List<Entity>>(){});
-        Assert.assertEquals(1, readEntities.size());
+        Assert.assertNotNull(readEntities);
         Assert.assertEquals(entity, readEntities.get(0));
     }
 

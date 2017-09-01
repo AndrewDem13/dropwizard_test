@@ -1,14 +1,11 @@
 package com.softserveinc.dropwizard_test;
 
-import com.codahale.metrics.ConsoleReporter;
 import com.mongodb.MongoClient;
 import com.softserveinc.dropwizard_test.healthChecks.MongoHealthCheck;
 import com.softserveinc.dropwizard_test.resource.EntityResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-
-import java.util.concurrent.TimeUnit;
 
 
 public class App extends Application<AppConfiguration> {

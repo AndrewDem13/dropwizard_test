@@ -20,7 +20,6 @@ public class MyBatisEntityDaoAdapter implements CrudDao<Entity> {
     @Override
     public void create(Entity entity) {
         sqlSession.getMapper(EntityMapper.class).create(entity);
-        sqlSession.commit();
     }
 
     @Override
@@ -35,15 +34,12 @@ public class MyBatisEntityDaoAdapter implements CrudDao<Entity> {
 
     @Override
     public Entity update(Entity entity) {
-        sqlSession.getMapper(EntityMapper.class).update(entity);
-        sqlSession.commit();
+        sqlSession.getMapper(EntityMapper.class).updateWithNoReturn(entity);
         return entity;
     }
 
     @Override
     public boolean delete(int id) {
-        boolean result = sqlSession.getMapper(EntityMapper.class).delete(id);
-        sqlSession.commit();
-        return result;
+        return sqlSession.getMapper(EntityMapper.class).delete(id);
     }
 }

@@ -5,7 +5,7 @@ import com.softserveinc.dropwizard_test.entity.Entity;
 
 import java.util.List;
 
-public interface EntityMapper {
+public interface EntityMapper extends CrudDao<Entity> {
 
 
     void create(Entity entity);
@@ -17,7 +17,7 @@ public interface EntityMapper {
     List<Entity> getAll();
 
 
-    void update(Entity entity);
+    void updateWithNoReturn(Entity entity);
 
 
     boolean delete(int id);
