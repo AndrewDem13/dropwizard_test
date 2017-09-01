@@ -62,7 +62,7 @@ public class DependencyBinder extends AbstractBinder {
         }
 
         /*
-        DB Switcher configuration
+        DB Switcher configuration (JMX - MBean solution)
         NoSQL (MongoDB) is default
          */
         DbSwitcher dbSwitcher = new DbSwitcher();
