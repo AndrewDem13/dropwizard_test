@@ -3,6 +3,7 @@ package services;
 import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDaoAdapter;
 import com.softserveinc.dropwizard_test.entity.Entity;
+import com.softserveinc.dropwizard_test.messaging.AppPublisher;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,8 +22,11 @@ public class EntityServiceTest {
     @Mock
     private Provider<CrudDao<Entity>> daoProvider = mock(Provider.class);
 
+    @Mock
+    private AppPublisher publisher = mock(AppPublisher.class);
+
     @InjectMocks
-    private EntityService entityService = new EntityService(daoProvider);
+    private EntityService entityService = new EntityService(publisher, daoProvider);
 
     private final static int ID = 1;
     private Entity entity = new Entity(ID, "test");
