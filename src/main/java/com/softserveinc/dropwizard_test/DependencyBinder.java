@@ -5,6 +5,7 @@ import com.mongodb.client.MongoDatabase;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.softserveinc.dropwizard_test.cron.StatisticsReportJob;
+import com.softserveinc.dropwizard_test.cron.CustomJobFactory;
 import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDaoAdapter;
@@ -14,10 +15,10 @@ import com.softserveinc.dropwizard_test.db.util.DaoFactory;
 import com.softserveinc.dropwizard_test.db.util.DbSwitcher;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.messaging.AppPublisher;
-import com.softserveinc.dropwizard_test.messaging.impl.RabbitConsumer;
 import com.softserveinc.dropwizard_test.messaging.impl.RabbitPublisher;
 import com.softserveinc.dropwizard_test.messaging.util.Constants;
 import com.softserveinc.dropwizard_test.messaging.util.RabbitConnectionFactory;
+import com.softserveinc.dropwizard_test.service.CreateUpdateCounter;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -28,7 +29,6 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
 import org.glassfish.hk2.api.TypeLiteral;
 import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.quartz.JobDetail;
 
 import javax.inject.Singleton;
 import javax.management.MBeanServer;
@@ -36,9 +36,6 @@ import javax.management.ObjectName;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.management.ManagementFactory;
-import java.util.concurrent.TimeoutException;
-
-import static org.quartz.JobBuilder.newJob;
 
 public class DependencyBinder extends AbstractBinder {
 
@@ -94,27 +91,26 @@ public class DependencyBinder extends AbstractBinder {
         connectionFactory.setHost(Constants.HOST);
         bindFactory(new RabbitConnectionFactory(connectionFactory)).to(Connection.class);
         bind(RabbitPublisher.class).to(AppPublisher.class).in(Singleton.class);
-        bind(RabbitConsumer.class).to(RabbitConsumer.class).in(Singleton.class);
-//        try {
-//            RabbitConsumer rabbitConsumer = new RabbitConsumer(connectionFactory.newConnection());
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        } catch (TimeoutException e) {
-//            e.printStackTrace();
-//        }
+
 
         /*
         CronJob configuration
          */
-        StatisticsReportJob statisticsReportJob = new StatisticsReportJob();
-
-        bind(statisticsReportJob).to(StatisticsReportJob.class);
-
+       bind(StatisticsReportJob.class).to(StatisticsReportJob.class).in(Singleton.class);
+       bind(CustomJobFactory.class).to(CustomJobFactory.class).in(Singleton.class);
 
 
+        /*
+        DAO registration
+         */
         bind(MongoEntityDao.class).to(MongoEntityDao.class).in(Singleton.class);
         bind(MongoEntityDaoAdapter.class).to(MongoEntityDaoAdapter.class).in(Singleton.class);
         bind(MyBatisEntityDaoAdapter.class).to(MyBatisEntityDaoAdapter.class).in(Singleton.class);
+
+        /*
+        Services registration
+         */
         bind(EntityService.class).to(EntityService.class).in(Singleton.class);
+        bind(CreateUpdateCounter.class).to(CreateUpdateCounter.class).in(Singleton.class);
     }
 }

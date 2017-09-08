@@ -1,8 +1,9 @@
 package com.softserveinc.dropwizard_test.cron;
 
-import com.softserveinc.dropwizard_test.messaging.impl.RabbitConsumer;
-import org.glassfish.hk2.utilities.binding.AbstractBinder;
-import org.quartz.*;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerFactory;
+import org.quartz.Trigger;
 import org.quartz.impl.StdSchedulerFactory;
 
 import javax.inject.Inject;
@@ -16,14 +17,14 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class CronJobConfigurationFeature implements Feature {
 
     @Inject
-    private StatisticsReportJob job;
+    private CustomJobFactory statisticsReportJobFactory;
 
     @Override
     public boolean configure(FeatureContext context) {
         // create job
         try {
             SchedulerFactory sf = new StdSchedulerFactory();
-            Scheduler sched = sf.getScheduler();
+            Scheduler scheduler = sf.getScheduler();
 
             Trigger trigger = newTrigger()
                     .withIdentity("trigger1", "group1")
@@ -35,19 +36,23 @@ public class CronJobConfigurationFeature implements Feature {
                 .withIdentity("job1", "group1")
                 .build();
 
-            sched.scheduleJob(job, trigger);
+            scheduler.setJobFactory(statisticsReportJobFactory);
+            scheduler.scheduleJob(job, trigger);
 
-            sched.start();
+//            JobDetail testJob = newJob(TestJob.class)
+//                    .withIdentity("testJob", "group1")
+//                    .build();
+//            Trigger testTrigger = newTrigger()
+//                    .withIdentity("trigger2", "group1")
+//                    .startAt(Date.from(Instant.now().plus(2, ChronoUnit.SECONDS)))
+//                    .withSchedule(simpleSchedule().withIntervalInSeconds(10).repeatForever())
+//                    .build();
+//            scheduler.scheduleJob(testJob, testTrigger);
+
+            scheduler.start();
         } catch (Exception ex) {
             ex.printStackTrace();
         }
-
-//        context.register(new AbstractBinder() {
-//            @Override
-//            protected void configure() {
-//                bind()
-//            }
-//        });
         return true;
     }
 }

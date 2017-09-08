@@ -1,23 +1,13 @@
 package com.softserveinc.dropwizard_test;
 
 import com.mongodb.MongoClient;
-import com.softserveinc.dropwizard_test.cron.StatisticsReportJob;
-import com.softserveinc.dropwizard_test.healthChecks.MongoHealthCheck;
 import com.softserveinc.dropwizard_test.cron.CronJobConfigurationFeature;
+import com.softserveinc.dropwizard_test.healthChecks.MongoHealthCheck;
+import com.softserveinc.dropwizard_test.messaging.impl.RabbitConsumer;
 import com.softserveinc.dropwizard_test.resource.EntityResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
-import org.quartz.JobDetail;
-import org.quartz.Scheduler;
-import org.quartz.SchedulerFactory;
-import org.quartz.Trigger;
-import org.quartz.impl.StdSchedulerFactory;
-
-import static org.quartz.CronScheduleBuilder.cronSchedule;
-import static org.quartz.JobBuilder.newJob;
-import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
-import static org.quartz.TriggerBuilder.newTrigger;
 
 
 public class App extends Application<AppConfiguration> {
@@ -40,13 +30,9 @@ public class App extends Application<AppConfiguration> {
 
         environment.jersey().register(new DependencyBinder(configuration));
         environment.jersey().register(EntityResource.class);
+
         environment.jersey().register(CronJobConfigurationFeature.class);
-
-
-
-
-
-
+        environment.jersey().register(RabbitConsumer.class);
 
         // Metrics' reporting to the console
 //        ConsoleReporter reporter = ConsoleReporter

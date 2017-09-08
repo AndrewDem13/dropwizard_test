@@ -24,7 +24,6 @@ public class RabbitPublisher implements AppPublisher {
     public void sendMessage(String message) {
         try {
             channel.basicPublish("", Constants.QUEUE_DEFAULT_NAME, null, message.getBytes());
-           // channel.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
