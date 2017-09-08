@@ -67,7 +67,7 @@ public class EntityService implements CrudService<Entity> {
     }
 
     private void sendUpdatedMessage(Entity entity) {
-        String message = String.format("Updated: Entity with ID %d and message: \"%s\". Updated through %s",
+        String message = String.format("UPDATED: Entity with ID %d and message: \"%s\". Updated through %s",
                 entity.getId(), entity.getMessage(), daoProvider.get().getClass().getSimpleName());
         publisher.sendMessage(message);
     }

@@ -5,8 +5,8 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 
 public class MongoHealthCheck extends HealthCheck {
+
     private MongoClient mongoClient;
-    private MongoDatabase database;
 
     public MongoHealthCheck(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
@@ -14,6 +14,7 @@ public class MongoHealthCheck extends HealthCheck {
 
     @Override
     protected Result check() throws Exception {
+        MongoDatabase database;
         try {
             database = mongoClient.getDatabase("healthCheck");
             database.createCollection("test");
