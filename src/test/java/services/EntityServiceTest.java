@@ -1,11 +1,15 @@
 package services;
 
+import com.codahale.metrics.Histogram;
+import com.codahale.metrics.MetricRegistry;
 import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDaoAdapter;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.messaging.AppPublisher;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
+import org.junit.After;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -13,27 +17,38 @@ import org.mockito.Mockito;
 
 import javax.inject.Provider;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 
 public class EntityServiceTest {
     @Mock
-    private MongoEntityDaoAdapter entityDao = mock(MongoEntityDaoAdapter.class);
+    private static MongoEntityDaoAdapter entityDao = mock(MongoEntityDaoAdapter.class);
 
     @Mock
-    private Provider<CrudDao<Entity>> daoProvider = mock(Provider.class);
+    private static Provider<CrudDao<Entity>> daoProvider = mock(Provider.class);
 
     @Mock
     private AppPublisher publisher = mock(AppPublisher.class);
 
+    @Mock
+    private static MetricRegistry metricRegistry = mock(MetricRegistry.class);
+
+    @BeforeClass
+    public static void beforClassSetup() {
+        Mockito.when(metricRegistry.histogram(anyString())).thenReturn(mock(Histogram.class));
+        Mockito.when(daoProvider.get()).thenReturn(entityDao);
+    }
+
     @InjectMocks
-    private EntityService entityService = new EntityService(publisher, daoProvider);
+    private EntityService entityService = new EntityService(publisher, daoProvider, metricRegistry);
 
     private final static int ID = 1;
     private Entity entity = new Entity(ID, "test");
 
-    @Before
-    public void setUp() throws Exception {
-        Mockito.when(daoProvider.get()).thenReturn(entityDao);
+    @After
+    public void tearDown() throws Exception {
+        reset(entityDao);
     }
 
     @Test
@@ -62,6 +77,7 @@ public class EntityServiceTest {
 
     @Test
     public void update() {
+        Mockito.when(daoProvider.get().update(entity)).thenReturn(entity);
         Mockito.when(entityDao.get(ID)).thenReturn(entity);
         entityService.update(entity);
 
