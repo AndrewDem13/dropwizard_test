@@ -1,5 +1,7 @@
 package com.softserveinc.dropwizard_test.service.impl;
 
+import com.codahale.metrics.Histogram;
+import com.codahale.metrics.MetricRegistry;
 import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.messaging.AppPublisher;
@@ -13,11 +15,13 @@ public class EntityService implements CrudService<Entity> {
 
     private AppPublisher publisher;
     private Provider<CrudDao<Entity>> daoProvider;
+    private Histogram messageLength;
 
     @Inject
-    public EntityService(AppPublisher publisher, Provider<CrudDao<Entity>> daoProvider) {
+    public EntityService(AppPublisher publisher, Provider<CrudDao<Entity>> daoProvider, MetricRegistry customMetricRegistry) {
         this.publisher = publisher;
         this.daoProvider = daoProvider;
+        messageLength = customMetricRegistry.histogram("Messages length");
     }
 
     @Override
@@ -29,6 +33,7 @@ public class EntityService implements CrudService<Entity> {
             daoProvider.get().update(entity);
             sendUpdatedMessage(entity);
         }
+        messageLength.update(entity.getMessage().length());
     }
 
     @Override
@@ -46,10 +51,12 @@ public class EntityService implements CrudService<Entity> {
         if (daoProvider.get().get(entity.getId()) != null) {
             Entity updatedEntity = daoProvider.get().update(entity);
             sendUpdatedMessage(updatedEntity);
+            messageLength.update(entity.getMessage().length());
             return updatedEntity;
         } else {
             daoProvider.get().create(entity);
             sendCreatedMessage(entity);
+            messageLength.update(entity.getMessage().length());
             return entity;
         }
     }
@@ -63,7 +70,6 @@ public class EntityService implements CrudService<Entity> {
         String message = String.format("CREATED: Entity with ID %d and message: \"%s\". Saved through %s",
                 entity.getId(), entity.getMessage(), daoProvider.get().getClass().getSimpleName());
         publisher.sendMessage(message);
-
     }
 
     private void sendUpdatedMessage(Entity entity) {

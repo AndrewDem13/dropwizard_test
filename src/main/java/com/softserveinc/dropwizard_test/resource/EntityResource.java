@@ -1,9 +1,12 @@
 package com.softserveinc.dropwizard_test.resource;
 
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import com.codahale.metrics.annotation.Timed;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -16,21 +19,33 @@ import java.util.Random;
 public class EntityResource {
 
     private final EntityService service;
+    private final MetricRegistry customMetricRegistry;
+    private Timer postTimer;
 
     @Inject
-    public EntityResource(EntityService service) {
+    public EntityResource(EntityService service, MetricRegistry customMetricRegistry) {
         this.service = service;
+        this.customMetricRegistry = customMetricRegistry;
     }
 
+    @PostConstruct
+    public void init() {
+        postTimer = customMetricRegistry.timer("POST Timer");
+    }
+
+    /*
+    Timer to the customMetricRegistry used here - Works fine, but fails tests.
+    Timers via @Timed good for tests, but works with default MetricRegistry
+     */
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
-    @Timed
     public Response add(Entity entity) {
-        // TODO normal ID validation
+        Timer.Context context = postTimer.time();
         if (entity.getId() == 0) {
             entity.setId(new Random().nextInt(1000));
         }
         service.create(entity);
+        context.stop();
         return Response.status(Response.Status.CREATED).entity(entity).build();
     }
 

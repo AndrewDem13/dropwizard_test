@@ -1,11 +1,12 @@
 package com.softserveinc.dropwizard_test;
 
+import com.codahale.metrics.MetricRegistry;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoDatabase;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
-import com.softserveinc.dropwizard_test.cron.StatisticsReportJob;
 import com.softserveinc.dropwizard_test.cron.CustomJobFactory;
+import com.softserveinc.dropwizard_test.cron.StatisticsReportJob;
 import com.softserveinc.dropwizard_test.db.CrudDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDao;
 import com.softserveinc.dropwizard_test.db.mongo.MongoEntityDaoAdapter;
@@ -18,7 +19,6 @@ import com.softserveinc.dropwizard_test.messaging.AppPublisher;
 import com.softserveinc.dropwizard_test.messaging.impl.RabbitPublisher;
 import com.softserveinc.dropwizard_test.messaging.util.Constants;
 import com.softserveinc.dropwizard_test.messaging.util.RabbitConnectionFactory;
-import com.softserveinc.dropwizard_test.service.CreateUpdateCounter;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 import org.apache.ibatis.io.Resources;
 import org.apache.ibatis.session.SqlSession;
@@ -40,9 +40,11 @@ import java.lang.management.ManagementFactory;
 public class DependencyBinder extends AbstractBinder {
 
     private final AppConfiguration configuration;
+    private final MetricRegistry customMetricRegistry;
 
-    public DependencyBinder(AppConfiguration configuration) {
+    public DependencyBinder(AppConfiguration configuration, MetricRegistry customMetricRegistry) {
         this.configuration = configuration;
+        this.customMetricRegistry = customMetricRegistry;
     }
 
     @Override
@@ -96,8 +98,8 @@ public class DependencyBinder extends AbstractBinder {
         /*
         CronJob configuration
          */
-       bind(StatisticsReportJob.class).to(StatisticsReportJob.class).in(Singleton.class);
-       bind(CustomJobFactory.class).to(CustomJobFactory.class).in(Singleton.class);
+        bind(StatisticsReportJob.class).to(StatisticsReportJob.class).in(Singleton.class);
+        bind(CustomJobFactory.class).to(CustomJobFactory.class).in(Singleton.class);
 
 
         /*
@@ -111,6 +113,7 @@ public class DependencyBinder extends AbstractBinder {
         Services registration
          */
         bind(EntityService.class).to(EntityService.class).in(Singleton.class);
-        bind(CreateUpdateCounter.class).to(CreateUpdateCounter.class).in(Singleton.class);
+
+        bind(customMetricRegistry).to(MetricRegistry.class);
     }
 }

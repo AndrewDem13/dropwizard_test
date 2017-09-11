@@ -1,5 +1,7 @@
 package com.softserveinc.dropwizard_test;
 
+import com.codahale.metrics.ConsoleReporter;
+import com.codahale.metrics.MetricRegistry;
 import com.mongodb.MongoClient;
 import com.softserveinc.dropwizard_test.cron.CronJobConfigurationFeature;
 import com.softserveinc.dropwizard_test.healthChecks.MongoHealthCheck;
@@ -8,6 +10,8 @@ import com.softserveinc.dropwizard_test.resource.EntityResource;
 import io.dropwizard.Application;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class App extends Application<AppConfiguration> {
@@ -28,18 +32,21 @@ public class App extends Application<AppConfiguration> {
 
         environment.healthChecks().register("MongoDB", new MongoHealthCheck(mongoClient));
 
-        environment.jersey().register(new DependencyBinder(configuration));
+        MetricRegistry customMetricRegistry = new MetricRegistry();
+
+        environment.jersey().register(new DependencyBinder(configuration, customMetricRegistry));
         environment.jersey().register(EntityResource.class);
 
         environment.jersey().register(CronJobConfigurationFeature.class);
         environment.jersey().register(RabbitConsumer.class);
 
         // Metrics' reporting to the console
-//        ConsoleReporter reporter = ConsoleReporter
-//                .forRegistry(environment.metrics())
-//                .convertRatesTo(TimeUnit.SECONDS)
-//                .convertDurationsTo(TimeUnit.MILLISECONDS)
-//                .build();
-//        reporter.start(10, TimeUnit.SECONDS);
+        ConsoleReporter reporter = ConsoleReporter
+                .forRegistry(customMetricRegistry)
+                .convertRatesTo(TimeUnit.SECONDS)
+                .convertDurationsTo(TimeUnit.MILLISECONDS)
+                .build();
+        reporter.start(5, TimeUnit.SECONDS);
+        reporter.report();
     }
 }

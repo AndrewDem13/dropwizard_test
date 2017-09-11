@@ -1,24 +1,37 @@
 package com.softserveinc.dropwizard_test.cron;
 
-import com.softserveinc.dropwizard_test.service.CreateUpdateCounter;
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
+import com.softserveinc.dropwizard_test.service.impl.EntityService;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 
 public class StatisticsReportJob implements Job {
 
     @Inject
-    CreateUpdateCounter counter;
+    private EntityService service;
+
+    @Inject
+    private MetricRegistry customMetricRegistry;
+
+    private Timer cronJobTimer;
+
+    @PostConstruct
+    public void init() {
+        cronJobTimer = customMetricRegistry.timer("Cron Job Timer");
+    }
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
+        Timer.Context jobExecution = cronJobTimer.time();
         System.out.println(" ===========  Here's Job execution begins ================");
-        System.out.println("Creates since last report: " + counter.getCurrentCreatesCount());
-        System.out.println("Updates since last report: " + counter.getCurrentUpdatesCount());
-        System.out.println("Creates total count: " + counter.getTotalCreatesCount());
-        System.out.println("Updates total count: " + counter.getTotalUpdatesCount());
+        System.out.println("  Total records in DB by now: " + service.getAll().size());
+        jobExecution.stop();
+        System.out.println(String.format("  This operation took %6.5f seconds in mean", cronJobTimer.getMeanRate()));
         System.out.println(" ===========  And now it's done! ================");
     }
 }
