@@ -1,7 +1,6 @@
 package resources;
 
 import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
 import com.google.common.collect.ImmutableList;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.resource.EntityResource;
@@ -15,23 +14,17 @@ import static org.mockito.Mockito.*;
 
 public class EntityResourceTest {
 
-    private final static EntityService entityService = mock(EntityService.class);
-    private final static MetricRegistry metricRegistry = mock(MetricRegistry.class);
+    private static final EntityService entityService = mock(EntityService.class);
+    private static final MetricRegistry metricRegistry = spy(MetricRegistry.class);
+    private static final Entity entity = new Entity(1,"test");
+    private static final String path = String.valueOf(entity.getId());
+    private static final Entity updatedEntity = new Entity(entity.getId(), "updated");
+    private static final ImmutableList<Entity> list = ImmutableList.of(entity);
 
     @ClassRule
     public static final ResourceTestRule resources = ResourceTestRule.builder()
             .addResource(new EntityResource(entityService, metricRegistry))
             .build();
-
-    @BeforeClass
-    public static void beforeClassSetUp() {
-        when(metricRegistry.timer(anyString())).thenReturn(mock(Timer.class));
-    }
-
-    private static final Entity entity = new Entity(1,"test");
-    private static final String path = String.valueOf(entity.getId());
-    private static final Entity updatedEntity = new Entity(entity.getId(), "updated");
-    private static final ImmutableList<Entity> list = ImmutableList.of(entity);
 
     @Before
     public void setUp() throws Exception {
