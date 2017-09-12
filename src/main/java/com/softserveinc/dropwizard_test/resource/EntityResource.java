@@ -2,11 +2,9 @@ package com.softserveinc.dropwizard_test.resource;
 
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
-import com.codahale.metrics.annotation.Timed;
 import com.softserveinc.dropwizard_test.entity.Entity;
 import com.softserveinc.dropwizard_test.service.impl.EntityService;
 
-import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -19,24 +17,20 @@ import java.util.Random;
 public class EntityResource {
 
     private final EntityService service;
-    private final MetricRegistry customMetricRegistry;
     private Timer postTimer;
+    private Timer getTimer;
+    private Timer putTimer;
+    private Timer deleteTimer;
 
     @Inject
     public EntityResource(EntityService service, MetricRegistry customMetricRegistry) {
         this.service = service;
-        this.customMetricRegistry = customMetricRegistry;
-    }
-
-    @PostConstruct
-    public void init() {
         postTimer = customMetricRegistry.timer("POST Timer");
+        getTimer = customMetricRegistry.timer("GET Timer");
+        putTimer = customMetricRegistry.timer("PUT Timer");
+        deleteTimer = customMetricRegistry.timer("DELETE Timer");
     }
 
-    /*
-    Timer to the customMetricRegistry used here - Works fine, but fails tests.
-    Timers via @Timed good for tests, but works with default MetricRegistry
-     */
     @POST
     @Consumes({MediaType.APPLICATION_JSON})
     public Response add(Entity entity) {
@@ -51,9 +45,10 @@ public class EntityResource {
 
     @GET
     @Path("{id}")
-    @Timed
     public Response getById(@PathParam("id") int id) {
+        Timer.Context context = getTimer.time();
         Entity result = service.get(id);
+        context.stop();
         if (result != null) {
             return Response.status(Response.Status.OK).entity(result).build();
         } else {
@@ -62,9 +57,10 @@ public class EntityResource {
     }
 
     @GET
-    @Timed
     public Response get() {
+        Timer.Context context = getTimer.time();
         List<Entity> result = service.getAll();
+        context.stop();
         if (result != null && result.size() > 0) {
             return Response.status(Response.Status.OK).entity(result).build();
         } else {
@@ -75,10 +71,11 @@ public class EntityResource {
     @PUT
     @Path("{id}")
     @Consumes({MediaType.APPLICATION_JSON})
-    @Timed
     public Response update(@PathParam("id") int id, Entity entity) {
+        Timer.Context context = putTimer.time();
         entity.setId(id);
         Object result = service.update(entity);
+        context.stop();
         if (result != null) {
             return Response.status(Response.Status.OK).entity(entity).build();
         } else {
@@ -88,9 +85,11 @@ public class EntityResource {
 
     @DELETE
     @Path("{id}")
-    @Timed
     public Response delete(@PathParam("id") int id) {
-        if (service.delete(id)) {
+        Timer.Context context = deleteTimer.time();
+        boolean isSucceeded = service.delete(id);
+        context.stop();
+        if (isSucceeded) {
             return Response.status(Response.Status.OK).build();
         } else {
             return Response.status(Response.Status.NOT_FOUND).build();
